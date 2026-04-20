@@ -1,6 +1,6 @@
 import Foundation
 
-struct Item: Identifiable, Hashable, Equatable {
+nonisolated struct Item: Identifiable, Hashable, Equatable, Sendable {
     let id: Int
     let title: String
     let description: String
@@ -26,7 +26,7 @@ struct Item: Identifiable, Hashable, Equatable {
     )
 }
 
-extension Item {
+nonisolated extension Item {
     init(dto: ItemDTO) {
         self.id = dto.id
         self.title = dto.title

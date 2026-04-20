@@ -2,7 +2,7 @@ import Foundation
 
 /// Domain wrapper for a paginated response from the items API.
 /// The service layer maps `ProductsResponseDTO` into this type.
-struct ItemsPage: Equatable {
+nonisolated struct ItemsPage: Equatable, Sendable {
     let items: [Item]
     let total: Int
     let skip: Int
