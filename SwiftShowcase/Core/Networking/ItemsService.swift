@@ -82,7 +82,16 @@ struct ItemsService: ItemsServiceProtocol {
         do {
             (data, response) = try await session.data(from: url)
         } catch let error as URLError {
-            throw APIError.transport(error.code)
+            switch error.code {
+            case .notConnectedToInternet,
+                 .networkConnectionLost,
+                 .timedOut,
+                 .cannotFindHost,
+                 .cannotConnectToHost:
+                throw APIError.transport(error.code)
+            default:
+                throw APIError.unknown
+            }
         } catch {
             throw APIError.unknown
         }
