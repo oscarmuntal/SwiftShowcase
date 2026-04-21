@@ -101,16 +101,13 @@ final class HomeViewModel {
         let trimmed = query.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else {
             searchResults = []
-            state = .loaded(items)
             return
         }
 
         do {
-            let results = try await itemsService.searchItems(query: trimmed)
-            searchResults = results
-            state = .loaded(results)
+            searchResults = try await itemsService.searchItems(query: trimmed)
         } catch {
-            state = .error(error.localizedDescription)
+            searchResults = []
         }
     }
 }

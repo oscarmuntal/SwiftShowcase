@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var viewModel: HomeViewModel
+    @State private var searchText = ""
 
     init(itemsService: ItemsServiceProtocol) {
         _viewModel = State(initialValue: HomeViewModel(itemsService: itemsService))
@@ -27,28 +28,36 @@ struct HomeView: View {
                 EmptyStateView(title: "No products", message: "Try refreshing.")
             case .loaded:
                 let displayed = viewModel.displayedItems
-                List {
-                    ForEach(displayed) { item in
-                        NavigationLink(value: item) {
-                            ItemRowView(item: item)
-                        }
-                        .onAppear {
-                            if !viewModel.isSearching, item.id == displayed.last?.id {
-                                Task { await viewModel.loadMore() }
+                if viewModel.isSearching, displayed.isEmpty {
+                    EmptyStateView(
+                        title: "No results",
+                        message: "No products match \"\(searchText)\".",
+                        systemImage: "magnifyingglass"
+                    )
+                } else {
+                    List {
+                        ForEach(displayed) { item in
+                            NavigationLink(value: item) {
+                                ItemRowView(item: item)
+                            }
+                            .onAppear {
+                                if !viewModel.isSearching, item.id == displayed.last?.id {
+                                    Task { await viewModel.loadMore() }
+                                }
                             }
                         }
+                        if !viewModel.isSearching, viewModel.isLoadingMore {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                        }
                     }
-                    if !viewModel.isSearching, viewModel.isLoadingMore {
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                    }
+                    .refreshable { await viewModel.refresh() }
                 }
-                .searchable(text: Binding(
-                    get: { viewModel.searchQuery },
-                    set: { viewModel.updateSearch($0) }
-                ))
-                .refreshable { await viewModel.refresh() }
             }
+        }
+        .searchable(text: $searchText)
+        .onChange(of: searchText) { _, newValue in
+            viewModel.updateSearch(newValue)
         }
         .navigationTitle("Home")
         .task {
