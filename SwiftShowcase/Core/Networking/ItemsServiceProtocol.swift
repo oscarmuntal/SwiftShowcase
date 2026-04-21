@@ -1,3 +1,10 @@
+//
+//  ItemsServiceProtocol.swift
+//  SwiftShowcase
+//
+//  Created by Òscar Muntal on 20/4/26.
+//
+
 import Foundation
 
 protocol ItemsServiceProtocol {

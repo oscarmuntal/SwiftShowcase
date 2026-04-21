@@ -1,3 +1,10 @@
+//
+//  ViewState.swift
+//  SwiftShowcase
+//
+//  Created by Òscar Muntal on 20/4/26.
+//
+
 import Foundation
 
 /// Represents the async lifecycle of a data-loading operation.

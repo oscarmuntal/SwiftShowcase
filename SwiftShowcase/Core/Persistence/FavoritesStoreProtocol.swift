@@ -1,3 +1,10 @@
+//
+//  FavoritesStoreProtocol.swift
+//  SwiftShowcase
+//
+//  Created by Òscar Muntal on 21/4/26.
+//
+
 import Foundation
 
 protocol FavoritesStoreProtocol: AnyObject {

@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct SwiftShowcaseApp: App {
+    @State private var navigationState = NavigationState()
+    @State private var favoritesStore = FavoritesStore()
+    let itemsService: ItemsServiceProtocol = ItemsService()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootTabsView(
+                itemsService: itemsService,
+                favoritesStore: favoritesStore
+            )
+            .environment(navigationState)
         }
     }
 }
