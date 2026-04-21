@@ -25,23 +25,28 @@ struct HomeView: View {
                 })
             case .empty:
                 EmptyStateView(title: "No products", message: "Try refreshing.")
-            case .loaded(let items):
+            case .loaded:
+                let displayed = viewModel.displayedItems
                 List {
-                    ForEach(items) { item in
+                    ForEach(displayed) { item in
                         NavigationLink(value: item) {
                             ItemRowView(item: item)
                         }
                         .onAppear {
-                            if item.id == items.last?.id {
+                            if !viewModel.isSearching, item.id == displayed.last?.id {
                                 Task { await viewModel.loadMore() }
                             }
                         }
                     }
-                    if viewModel.isLoadingMore {
+                    if !viewModel.isSearching, viewModel.isLoadingMore {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                     }
                 }
+                .searchable(text: Binding(
+                    get: { viewModel.searchQuery },
+                    set: { viewModel.updateSearch($0) }
+                ))
                 .refreshable { await viewModel.refresh() }
             }
         }

@@ -5,11 +5,14 @@
 //  Created by Òscar Muntal on 21/4/26.
 //
 
+import Combine
 import Foundation
 
 @Observable
 final class HomeViewModel {
     private let itemsService: ItemsServiceProtocol
+    private let searchSubject = CurrentValueSubject<String, Never>("")
+    private var cancellables = Set<AnyCancellable>()
 
     var state: ViewState<[Item]> = .idle
     var items: [Item] = []
@@ -17,13 +20,31 @@ final class HomeViewModel {
     var currentSkip: Int = 0
     let pageSize: Int = 20
     var isLoadingMore: Bool = false
+    var searchQuery: String = ""
+    var searchResults: [Item] = []
 
     var hasMorePages: Bool {
         currentSkip + items.count < totalItems
     }
 
+    var isSearching: Bool {
+        !searchQuery.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    var displayedItems: [Item] {
+        isSearching ? searchResults : items
+    }
+
     init(itemsService: ItemsServiceProtocol) {
         self.itemsService = itemsService
+
+        searchSubject
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] query in
+                Task { await self?.runSearch(query: query) }
+            }
+            .store(in: &cancellables)
     }
 
     func load() async {
@@ -69,5 +90,27 @@ final class HomeViewModel {
 
     func refresh() async {
         await load()
+    }
+
+    func updateSearch(_ query: String) {
+        searchQuery = query
+        searchSubject.send(query)
+    }
+
+    private func runSearch(query: String) async {
+        let trimmed = query.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else {
+            searchResults = []
+            state = .loaded(items)
+            return
+        }
+
+        do {
+            let results = try await itemsService.searchItems(query: trimmed)
+            searchResults = results
+            state = .loaded(results)
+        } catch {
+            state = .error(error.localizedDescription)
+        }
     }
 }
