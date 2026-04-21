@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct HomeView: View {
+    let favoritesStore: FavoritesStoreProtocol
     @State private var viewModel: HomeViewModel
     @State private var searchText = ""
 
-    init(itemsService: ItemsServiceProtocol) {
+    init(itemsService: ItemsServiceProtocol, favoritesStore: FavoritesStoreProtocol) {
+        self.favoritesStore = favoritesStore
         _viewModel = State(initialValue: HomeViewModel(itemsService: itemsService))
     }
 
@@ -59,6 +61,9 @@ struct HomeView: View {
         .onChange(of: searchText) { _, newValue in
             viewModel.updateSearch(newValue)
         }
+        .navigationDestination(for: Item.self) { item in
+            DetailView(item: item, favoritesStore: favoritesStore)
+        }
         .navigationTitle("Home")
         .task {
             if case .idle = viewModel.state {
@@ -70,7 +75,7 @@ struct HomeView: View {
 
 #Preview {
     NavigationStack {
-        HomeView(itemsService: PreviewItemsService())
+        HomeView(itemsService: PreviewItemsService(), favoritesStore: FavoritesStore())
     }
 }
 

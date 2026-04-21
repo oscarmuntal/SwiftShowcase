@@ -18,7 +18,7 @@ struct RootTabsView: View {
 
         TabView {
             NavigationStack(path: $navState.homePath) {
-                HomeView(itemsService: itemsService)
+                HomeView(itemsService: itemsService, favoritesStore: favoritesStore)
             }
             .tabItem {
                 Label("Home", systemImage: "house")
