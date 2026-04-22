@@ -12,9 +12,11 @@ struct RootTabsView: View {
     let favoritesStore: FavoritesStoreProtocol
 
     @Environment(NavigationState.self) var navigationState
+    @AppStorage("appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
 
     var body: some View {
         @Bindable var navState = navigationState
+        let appearanceMode = AppearanceMode(rawValue: appearanceModeRaw) ?? .system
 
         TabView {
             NavigationStack(path: $navState.homePath) {
@@ -32,11 +34,24 @@ struct RootTabsView: View {
             }
 
             NavigationStack {
-                Text("Settings")
+                SettingsView()
             }
             .tabItem {
                 Label("Settings", systemImage: "gear")
             }
         }
+        .preferredColorScheme(appearanceMode.colorScheme)
+        #if DEBUG
+        .overlay(alignment: .top) {
+            Text("DEBUG")
+                .font(.caption2)
+                .bold()
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(Capsule().fill(.red))
+                .padding(.top, 4)
+        }
+        #endif
     }
 }
