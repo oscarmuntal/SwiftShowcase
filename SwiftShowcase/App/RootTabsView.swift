@@ -25,7 +25,7 @@ struct RootTabsView: View {
             }
 
             NavigationStack(path: $navState.favoritesPath) {
-                Text("Favorites")
+                FavoritesView(itemsService: itemsService, favoritesStore: favoritesStore)
             }
             .tabItem {
                 Label("Favorites", systemImage: "star.fill")
