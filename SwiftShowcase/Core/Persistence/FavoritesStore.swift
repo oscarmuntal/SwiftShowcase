@@ -17,9 +17,15 @@ final class FavoritesStore: FavoritesStoreProtocol {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        if let data = defaults.data(forKey: Self.key),
-           let decoded = try? JSONDecoder().decode([Int].self, from: data) {
-            self.ids = Set(decoded)
+        if let data = defaults.data(forKey: Self.key) {
+            do {
+                let decoded = try JSONDecoder().decode([Int].self, from: data)
+                self.ids = Set(decoded)
+            } catch {
+                print("FavoritesStore: corrupted UserDefaults data, resetting. Error: \(error)")
+                defaults.removeObject(forKey: Self.key)
+                self.ids = []
+            }
         } else {
             self.ids = []
         }
