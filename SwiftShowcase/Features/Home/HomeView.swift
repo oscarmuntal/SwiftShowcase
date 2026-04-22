@@ -11,10 +11,11 @@ struct HomeView: View {
     let favoritesStore: FavoritesStoreProtocol
     @State private var viewModel: HomeViewModel
     @State private var searchText = ""
+    @AppStorage("showFavoritesFirst") private var showFavoritesFirst = false
 
     init(itemsService: ItemsServiceProtocol, favoritesStore: FavoritesStoreProtocol) {
         self.favoritesStore = favoritesStore
-        _viewModel = State(initialValue: HomeViewModel(itemsService: itemsService))
+        _viewModel = State(initialValue: HomeViewModel(itemsService: itemsService, favoritesStore: favoritesStore))
     }
 
     var body: some View {
@@ -66,9 +67,15 @@ struct HomeView: View {
         }
         .navigationTitle("Home")
         .task {
+            viewModel.applyOrderingChange(showFavoritesFirst: showFavoritesFirst)
             if case .idle = viewModel.state {
                 await viewModel.load()
             }
+            await viewModel.loadFavoriteItems()
+        }
+        .onChange(of: showFavoritesFirst) { _, newValue in
+            viewModel.applyOrderingChange(showFavoritesFirst: newValue)
+            Task { await viewModel.loadFavoriteItems() }
         }
     }
 }

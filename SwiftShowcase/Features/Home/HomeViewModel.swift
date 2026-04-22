@@ -11,6 +11,7 @@ import Foundation
 @Observable
 final class HomeViewModel {
     private let itemsService: ItemsServiceProtocol
+    private let favoritesStore: FavoritesStoreProtocol
     private let searchSubject = CurrentValueSubject<String, Never>("")
     private var cancellables = Set<AnyCancellable>()
 
@@ -22,6 +23,8 @@ final class HomeViewModel {
     var isLoadingMore: Bool = false
     var searchQuery: String = ""
     var searchResults: [Item] = []
+    var showFavoritesFirst: Bool = false
+    private var fetchedFavoriteItems: [Item] = []
 
     var hasMorePages: Bool {
         currentSkip + items.count < totalItems
@@ -32,11 +35,16 @@ final class HomeViewModel {
     }
 
     var displayedItems: [Item] {
-        isSearching ? searchResults : items
+        if isSearching { return searchResults }
+        guard showFavoritesFirst else { return items }
+        let loadedIds = Set(items.map(\.id))
+        let missingFavorites = fetchedFavoriteItems.filter { !loadedIds.contains($0.id) }
+        return orderedItems(missingFavorites + items)
     }
 
-    init(itemsService: ItemsServiceProtocol) {
+    init(itemsService: ItemsServiceProtocol, favoritesStore: FavoritesStoreProtocol) {
         self.itemsService = itemsService
+        self.favoritesStore = favoritesStore
 
         searchSubject
             .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
@@ -95,6 +103,30 @@ final class HomeViewModel {
     func updateSearch(_ query: String) {
         searchQuery = query
         searchSubject.send(query)
+    }
+
+    func applyOrderingChange(showFavoritesFirst: Bool) {
+        self.showFavoritesFirst = showFavoritesFirst
+    }
+
+    func loadFavoriteItems() async {
+        let ids = Array(favoritesStore.ids).sorted()
+        guard showFavoritesFirst, !ids.isEmpty else {
+            fetchedFavoriteItems = []
+            return
+        }
+        do {
+            fetchedFavoriteItems = try await itemsService.fetchItems(byIds: ids)
+        } catch {
+            fetchedFavoriteItems = []
+        }
+    }
+
+    private func orderedItems(_ source: [Item]) -> [Item] {
+        guard showFavoritesFirst else { return source }
+        let favorited = source.filter { favoritesStore.contains($0.id) }
+        let nonFavorited = source.filter { !favoritesStore.contains($0.id) }
+        return favorited + nonFavorited
     }
 
     private func runSearch(query: String) async {
