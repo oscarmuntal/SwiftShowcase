@@ -36,7 +36,7 @@ final class FavoritesViewModel {
                 state = .loaded(items)
             }
         } catch {
-            state = .error(error.localizedDescription)
+            state = .error(ErrorMessageMapper.message(from: error))
         }
     }
 

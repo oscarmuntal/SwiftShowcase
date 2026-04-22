@@ -73,7 +73,7 @@ final class HomeViewModel {
             currentSkip = 0
             state = items.isEmpty ? .empty : .loaded(items)
         } catch {
-            state = .error(error.localizedDescription)
+            state = .error(ErrorMessageMapper.message(from: error))
         }
     }
 
