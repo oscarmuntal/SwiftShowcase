@@ -20,32 +20,23 @@ struct FavoritesView: View {
     }
 
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .idle, .loading:
-                LoadingView()
-            case .error(let message):
-                ErrorView(message: message, retry: {
-                    Task { await viewModel.load() }
-                })
-            case .empty:
-                EmptyStateView(
-                    title: "No favorites yet",
-                    message: "Tap the star on any product to add it here.",
-                    systemImage: "star"
-                )
-            case .loaded(let items):
-                List {
-                    ForEach(items) { item in
-                        NavigationLink(value: item) {
-                            ItemRowView(item: item)
-                        }
-                        .swipeActions {
-                            Button(role: .destructive) {
-                                Task { await viewModel.remove(item) }
-                            } label: {
-                                Label("Remove", systemImage: "trash")
-                            }
+        StateRenderingView(
+            state: viewModel.state,
+            emptyTitle: "No favorites yet",
+            emptyMessage: "Tap the star on any product to add it here.",
+            emptySystemImage: "star",
+            retry: { Task { await viewModel.load() } }
+        ) { items in
+            List {
+                ForEach(items) { item in
+                    NavigationLink(value: item) {
+                        ItemRowView(item: item)
+                    }
+                    .swipeActions {
+                        Button(role: .destructive) {
+                            Task { await viewModel.remove(item) }
+                        } label: {
+                            Label("Remove", systemImage: "trash")
                         }
                     }
                 }
