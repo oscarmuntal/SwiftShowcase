@@ -18,13 +18,14 @@ struct RootTabsView: View {
         @Bindable var navState = navigationState
         let appearanceMode = AppearanceMode(rawValue: appearanceModeRaw) ?? .system
 
-        TabView {
+        TabView(selection: $navState.selectedTab) {
             NavigationStack(path: $navState.homePath) {
                 HomeView(itemsService: itemsService, favoritesStore: favoritesStore)
             }
             .tabItem {
                 Label("Home", systemImage: "house")
             }
+            .tag(Tab.home)
 
             NavigationStack(path: $navState.favoritesPath) {
                 FavoritesView(itemsService: itemsService, favoritesStore: favoritesStore)
@@ -32,6 +33,7 @@ struct RootTabsView: View {
             .tabItem {
                 Label("Favorites", systemImage: "star.fill")
             }
+            .tag(Tab.favorites)
 
             NavigationStack {
                 SettingsView()
@@ -39,6 +41,7 @@ struct RootTabsView: View {
             .tabItem {
                 Label("Settings", systemImage: "gear")
             }
+            .tag(Tab.settings)
         }
         .preferredColorScheme(appearanceMode.colorScheme)
         #if DEBUG

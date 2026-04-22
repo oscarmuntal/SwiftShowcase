@@ -11,6 +11,7 @@ import SwiftUI
 struct SwiftShowcaseApp: App {
     @State private var navigationState = NavigationState()
     @State private var favoritesStore = FavoritesStore()
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     let itemsService: ItemsServiceProtocol = ItemsService()
 
     var body: some Scene {
@@ -20,6 +21,13 @@ struct SwiftShowcaseApp: App {
                 favoritesStore: favoritesStore
             )
             .environment(navigationState)
+            .fullScreenCover(isPresented: Binding(
+                get: { !hasCompletedOnboarding },
+                set: { hasCompletedOnboarding = !$0 }
+            )) {
+                OnboardingView(itemsService: itemsService)
+                    .environment(navigationState)
+            }
         }
     }
 }

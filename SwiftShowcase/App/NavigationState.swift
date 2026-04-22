@@ -9,8 +9,13 @@ import SwiftUI
 
 /// Shared navigation state injected into the environment.
 /// Each tab owns its own `NavigationPath` so pushes are independent.
+enum Tab {
+    case home, favorites, settings
+}
+
 @Observable
 final class NavigationState {
+    var selectedTab: Tab = .home
     var homePath = NavigationPath()
     var favoritesPath = NavigationPath()
 }
