@@ -58,20 +58,20 @@ struct ItemsService: ItemsServiceProtocol {
         let baseURL = self.baseURL
         let service = self
         
-        let itemsByID = try await withThrowingTaskGroup(of: (Int, Item).self) { group in
+        let itemsByID = await withTaskGroup(of: (Int, Item?).self) { group in
             for id in ids {
                 group.addTask {
                     guard let url = URL(string: "\(baseURL)/\(id)") else {
-                        throw APIError.invalidURL
+                        return (id, nil)
                     }
-                    let dto: ItemDTO = try await service.fetch(url: url)
-                    return (id, Item(dto: dto))
+                    let dto: ItemDTO? = try? await service.fetch(url: url)
+                    return (id, dto.map { Item(dto: $0) })
                 }
             }
 
             var result: [Int: Item] = [:]
-            for try await (id, item) in group {
-                result[id] = item
+            for await (id, item) in group {
+                if let item { result[id] = item }
             }
             return result
         }

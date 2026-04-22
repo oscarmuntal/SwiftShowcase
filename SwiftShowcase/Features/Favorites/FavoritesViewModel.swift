@@ -30,7 +30,11 @@ final class FavoritesViewModel {
 
         do {
             let items = try await itemsService.fetchItems(byIds: ids)
-            state = items.isEmpty ? .empty : .loaded(items)
+            if items.isEmpty {
+                state = .error("Could not load your favorites. Please try again.")
+            } else {
+                state = .loaded(items)
+            }
         } catch {
             state = .error(error.localizedDescription)
         }
