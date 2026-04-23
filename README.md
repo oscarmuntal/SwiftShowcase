@@ -73,6 +73,8 @@ SwiftShowcase/
 
 ## Screens
 
+<img src="Screenshots/01-home.png" width="280"> <img src="Screenshots/01b-home-scrolled.png" width="280"> <img src="Screenshots/02-detail.png" width="280"> <img src="Screenshots/03-favorites.png" width="280">
+
 | Screen | Description |
 |--------|-------------|
 | **Home** | Paginated product list with pull-to-refresh, infinite scroll, and remote search |
