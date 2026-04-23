@@ -9,9 +9,7 @@ import Foundation
 
 @Observable
 final class FavoritesStore: FavoritesStoreProtocol {
-
     private static let key = "favorites.itemIDs.v1"
-
     private(set) var ids: Set<Int>
     private let defaults: UserDefaults
 

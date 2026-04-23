@@ -8,7 +8,6 @@
 import Foundation
 
 struct ItemsService: ItemsServiceProtocol {
-
     private let session: URLSession
     private let baseURL = "https://dummyjson.com/products"
 
