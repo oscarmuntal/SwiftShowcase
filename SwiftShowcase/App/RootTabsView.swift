@@ -12,7 +12,7 @@ struct RootTabsView: View {
     let favoritesStore: FavoritesStoreProtocol
 
     @Environment(NavigationState.self) var navigationState
-    @AppStorage("appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
+    @AppStorage(StorageKeys.appearanceMode) private var appearanceModeRaw: String = AppearanceMode.system.rawValue
 
     var body: some View {
         @Bindable var navState = navigationState

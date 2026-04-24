@@ -10,7 +10,7 @@ import SwiftUI
 struct OnboardingView: View {
     let itemsService: ItemsServiceProtocol
 
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage(StorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
     @Environment(NavigationState.self) private var navigationState
     @Environment(\.dismiss) private var dismiss
     @State private var pageIndex = 0

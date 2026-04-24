@@ -11,7 +11,7 @@ import SwiftUI
 struct SwiftShowcaseApp: App {
     @State private var navigationState = NavigationState()
     @State private var favoritesStore = FavoritesStore()
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage(StorageKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
     let itemsService: ItemsServiceProtocol = ItemsService()
 
     var body: some Scene {

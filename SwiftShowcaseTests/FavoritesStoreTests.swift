@@ -11,7 +11,7 @@ import XCTest
 final class FavoritesStoreTests: XCTestCase {
 
     private let suiteName = "com.swiftshowcase.tests.favorites"
-    private let key = "favorites.itemIDs.v1"
+    private let key = StorageKeys.favoriteItemIDs
     private var defaults: UserDefaults!
 
     override func setUp() {

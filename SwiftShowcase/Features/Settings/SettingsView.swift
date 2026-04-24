@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
-    @AppStorage("showFavoritesFirst") private var showFavoritesFirst = false
+    @AppStorage(StorageKeys.appearanceMode) private var appearanceModeRaw: String = AppearanceMode.system.rawValue
+    @AppStorage(StorageKeys.showFavoritesFirst) private var showFavoritesFirst = false
     @State private var viewModel = SettingsViewModel()
 
     private var appearanceMode: Binding<AppearanceMode> {

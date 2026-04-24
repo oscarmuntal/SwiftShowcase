@@ -13,6 +13,6 @@ import Foundation
 @Observable
 final class SettingsViewModel {
     func resetOnboarding() {
-        UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+        UserDefaults.standard.set(false, forKey: StorageKeys.hasCompletedOnboarding)
     }
 }

@@ -11,7 +11,7 @@ struct HomeView: View {
     let favoritesStore: FavoritesStoreProtocol
     @State private var viewModel: HomeViewModel
     @State private var searchText = ""
-    @AppStorage("showFavoritesFirst") private var showFavoritesFirst = false
+    @AppStorage(StorageKeys.showFavoritesFirst) private var showFavoritesFirst = false
 
     init(itemsService: ItemsServiceProtocol, favoritesStore: FavoritesStoreProtocol) {
         self.favoritesStore = favoritesStore
