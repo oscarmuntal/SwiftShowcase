@@ -70,7 +70,9 @@ struct OnboardingView: View {
                 navigationState.homePath.append(firstItem)
             }
         } catch {
-            // Don't strand the user on a failed fetch
+            // Fetch failed — user lands on Home without jumping to detail
+            // This is intentional: onboarding completes regardless
+            print("finishAndJumpToFirstProduct: fetch failed — \(error)")
         }
         navigationState.selectedTab = .home
         hasCompletedOnboarding = true
