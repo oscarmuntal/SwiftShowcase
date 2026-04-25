@@ -13,6 +13,7 @@ struct RootTabsView: View {
 
     @Environment(NavigationState.self) var navigationState
     @AppStorage(StorageKeys.appearanceMode) private var appearanceModeRaw: String = AppearanceMode.system.rawValue
+    @SceneStorage(StorageKeys.selectedTab) private var savedTab: String = Tab.home.rawValue
 
     var body: some View {
         @Bindable var navState = navigationState
@@ -42,6 +43,12 @@ struct RootTabsView: View {
                 Label("Settings", systemImage: "gear")
             }
             .tag(Tab.settings)
+        }
+        .task {
+            navigationState.selectedTab = Tab(rawValue: savedTab) ?? .home
+        }
+        .onChange(of: navigationState.selectedTab) { _, newValue in
+            savedTab = newValue.rawValue
         }
         .preferredColorScheme(appearanceMode.colorScheme)
         #if DEBUG

@@ -9,7 +9,7 @@ import SwiftUI
 
 /// Shared navigation state injected into the environment.
 /// Each tab owns its own `NavigationPath` so pushes are independent.
-enum Tab {
+enum Tab: String {
     case home, favorites, settings
 }
 

@@ -12,4 +12,5 @@ enum StorageKeys {
     static let showFavoritesFirst = "showFavoritesFirst"
     static let appearanceMode = "appearanceMode"
     static let favoriteItemIDs = "favorites.itemIDs.v1"
+    static let selectedTab = "selectedTab"
 }
