@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    let favoritesStore: FavoritesStoreProtocol
+    private let favoritesStore: FavoritesStoreProtocol
     @State private var viewModel: HomeViewModel
     @State private var searchText = ""
     @AppStorage(StorageKeys.showFavoritesFirst) private var showFavoritesFirst = false
@@ -23,6 +23,7 @@ struct HomeView: View {
             state: viewModel.state,
             emptyTitle: "No products",
             emptyMessage: "Try refreshing.",
+            emptySystemImage: "tray",
             retry: { Task { await viewModel.load() } }
         ) { _ in
             let displayed = viewModel.displayedItems

@@ -11,7 +11,7 @@ struct StateRenderingView<T, Content: View>: View {
     let state: ViewState<T>
     let emptyTitle: String
     let emptyMessage: String
-    var emptySystemImage: String = "tray"
+    let emptySystemImage: String
     let retry: () -> Void
     @ViewBuilder let content: (T) -> Content
 
