@@ -13,19 +13,12 @@ final class DetailViewModel {
     private let favoritesStore: FavoritesStoreProtocol
 
     var isFavorite: Bool {
-        favoritesStore.contains(item.id)
+        get { favoritesStore.contains(item.id) }
+        set { newValue ? favoritesStore.add(item.id) : favoritesStore.remove(item.id) }
     }
 
     init(item: Item, favoritesStore: FavoritesStoreProtocol) {
         self.item = item
         self.favoritesStore = favoritesStore
-    }
-
-    func toggleFavorite() {
-        if isFavorite {
-            favoritesStore.remove(item.id)
-        } else {
-            favoritesStore.add(item.id)
-        }
     }
 }

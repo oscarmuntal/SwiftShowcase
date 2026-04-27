@@ -18,6 +18,8 @@ struct DetailView: View {
     }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 AsyncImage(url: item.imageURLs.first ?? item.thumbnailURL) { image in
@@ -70,13 +72,7 @@ struct DetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
-                Button {
-                    viewModel.toggleFavorite()
-                } label: {
-                    Image(systemName: viewModel.isFavorite ? "star.fill" : "star")
-                        .foregroundStyle(viewModel.isFavorite ? .yellow : .secondary)
-                }
-
+                FavoriteButton(isFavorite: $viewModel.isFavorite)
                 Button {
                     showInfoSheet = true
                 } label: {
