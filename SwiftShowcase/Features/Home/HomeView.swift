@@ -19,41 +19,45 @@ struct HomeView: View {
     }
 
     var body: some View {
-        StateRenderingView(
-            state: viewModel.state,
-            emptyTitle: "No products",
-            emptyMessage: "Try refreshing.",
-            emptySystemImage: "tray",
-            retry: { Task { await viewModel.load() } }
-        ) { _ in
-            let displayed = viewModel.displayedItems
-            if viewModel.isSearching, displayed.isEmpty {
-                EmptyStateView(
-                    title: "No results",
-                    message: "No products match \"\(searchText)\".",
-                    systemImage: "magnifyingglass"
-                )
-            } else {
-                List {
-                    ForEach(displayed) { item in
-                        NavigationLink(value: item) {
-                            ItemRowView(item: item)
-                        }
-                        .onAppear {
-                            if !viewModel.isSearching, item.id == displayed.last?.id {
-                                Task { await viewModel.loadMore() }
+        VStack(spacing: 0) {
+            SearchBar(text: $searchText)
+                .padding(.vertical, 8)
+
+            StateRenderingView(
+                state: viewModel.state,
+                emptyTitle: "No products",
+                emptyMessage: "Try refreshing.",
+                emptySystemImage: "tray",
+                retry: { Task { await viewModel.load() } }
+            ) { _ in
+                let displayed = viewModel.displayedItems
+                if viewModel.isSearching, displayed.isEmpty {
+                    EmptyStateView(
+                        title: "No results",
+                        message: "No products match \"\(searchText)\".",
+                        systemImage: "magnifyingglass"
+                    )
+                } else {
+                    List {
+                        ForEach(displayed) { item in
+                            NavigationLink(value: item) {
+                                ItemRowView(item: item)
+                            }
+                            .onAppear {
+                                if !viewModel.isSearching, item.id == displayed.last?.id {
+                                    Task { await viewModel.loadMore() }
+                                }
                             }
                         }
+                        if !viewModel.isSearching, viewModel.isLoadingMore {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                        }
                     }
-                    if !viewModel.isSearching, viewModel.isLoadingMore {
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                    }
+                    .refreshable { await viewModel.refresh() }
                 }
-                .refreshable { await viewModel.refresh() }
             }
         }
-        .searchable(text: $searchText)
         .onChange(of: searchText) { _, newValue in
             viewModel.updateSearch(newValue)
         }
