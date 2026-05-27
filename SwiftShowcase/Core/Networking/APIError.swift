@@ -7,7 +7,7 @@
 
 import Foundation
 
-nonisolated enum APIError: Error, Equatable {
+nonisolated enum APIError: Error, Equatable, Sendable {
     case invalidURL
     case transport(URLError.Code)
     case badStatus(Int)
