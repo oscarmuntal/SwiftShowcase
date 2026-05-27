@@ -8,8 +8,8 @@
 import XCTest
 @testable import SwiftShowcase
 
+@MainActor
 final class FavoritesStoreTests: XCTestCase {
-
     private let suiteName = "com.swiftshowcase.tests.favorites"
     private let key = StorageKeys.favoriteItemIDs
     private var defaults: UserDefaults!

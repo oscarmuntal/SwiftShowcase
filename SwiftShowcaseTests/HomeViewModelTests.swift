@@ -8,6 +8,7 @@
 import XCTest
 @testable import SwiftShowcase
 
+@MainActor
 final class HomeViewModelTests: XCTestCase {
 
     private var service: MockItemsService!
