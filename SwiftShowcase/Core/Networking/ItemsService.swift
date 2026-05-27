@@ -88,24 +88,20 @@ struct ItemsService: ItemsServiceProtocol {
         do {
             (data, response) = try await session.data(from: url)
         } catch let error as URLError {
-            switch error.code {
-            case .notConnectedToInternet,
-                 .networkConnectionLost,
-                 .timedOut,
-                 .cannotFindHost,
-                 .cannotConnectToHost:
-                throw APIError.transport(error.code)
-            default:
-                throw APIError.unknown
+            if error.code == URLError.cancelled {
+                throw CancellationError()
             }
+            throw APIError.transport(error.code)
         } catch {
             throw APIError.unknown
         }
 
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200..<300).contains(httpResponse.statusCode) else {
-            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-            throw APIError.badStatus(statusCode)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.badStatus(httpResponse.statusCode)
         }
 
         do {

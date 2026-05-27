@@ -10,6 +10,7 @@ import Foundation
 nonisolated enum APIError: Error, Equatable, Sendable {
     case invalidURL
     case transport(URLError.Code)
+    case invalidResponse
     case badStatus(Int)
     case decoding
     case unknown
@@ -26,11 +27,15 @@ nonisolated enum APIError: Error, Equatable, Sendable {
                 "Your network connection was lost. Please try again."
             case .timedOut:
                 "The request timed out. Please try again."
-            case .cannotFindHost, .cannotConnectToHost:
+            case .cannotFindHost, .cannotConnectToHost, .dnsLookupFailed:
                 "The server could not be reached. Please try again later."
+            case .secureConnectionFailed, .serverCertificateUntrusted:
+                "The secure connection to the server failed. Please try again later."
             default:
                 "A network error occurred. Check your connection and try again."
             }
+        case .invalidResponse:
+            "We received an unexpected response from the server. Please try again later."
         case .badStatus(let code):
             "The server returned an error (HTTP \(code)). Please try again later."
         case .decoding:
