@@ -8,6 +8,7 @@
 import Foundation
 @testable import SwiftShowcase
 
+@MainActor
 final class MockItemsService: ItemsServiceProtocol {
     var fetchItemsResult: Result<ItemsPage, Error> = .success(ItemsPage(items: [], total: 0, skip: 0, limit: 20))
     var searchItemsResult: Result<[Item], Error> = .success([])
