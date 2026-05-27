@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StateRenderingView<T, Content: View>: View {
+struct StateRenderingView<T: Sendable, Content: View>: View {
     let state: ViewState<T>
     let emptyTitle: String
     let emptyMessage: String
