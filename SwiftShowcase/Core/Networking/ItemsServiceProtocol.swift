@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ItemsServiceProtocol {
+protocol ItemsServiceProtocol: Sendable {
     func fetchItems(skip: Int, limit: Int) async throws -> ItemsPage
     func searchItems(query: String) async throws -> [Item]
     func fetchItems(byIds ids: [Int]) async throws -> [Item]

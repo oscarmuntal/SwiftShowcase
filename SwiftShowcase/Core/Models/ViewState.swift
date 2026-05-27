@@ -9,7 +9,7 @@ import Foundation
 
 /// Represents the async lifecycle of a data-loading operation.
 /// Views switch over this enum to show the appropriate UI for each phase.
-enum ViewState<T> {
+enum ViewState<T: Sendable>: Sendable {
     case idle
     case loading
     case loaded(T)
